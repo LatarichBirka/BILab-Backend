@@ -9,6 +9,7 @@ using BILab.Domain.DTOs.Pageable;
 using BILab.Domain.DTOs.Record;
 using BILab.Domain.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Asn1;
 using System.Linq.Expressions;
 
 namespace BILab.BusinessLogic.Services.EntityServices {
@@ -78,6 +79,20 @@ namespace BILab.BusinessLogic.Services.EntityServices {
                 .ToListAsync();
 
             return ServiceResult.Ok(records);
+        }
+
+        public async Task<ServiceResult> GetFullRecordDataByIdAsync(Guid id)
+        {
+            var record = await _context.Records
+                .Include(x => x.Customer)
+                .Include(x => x.Employer)
+                .Include(x => x.Procedure)
+                .Include(x => x.Adress)
+                .FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+            return record is not null ?
+                ServiceResult.Ok(_mapper.Map<GetFullRecordDTO>(record)) :
+                ServiceResult.Fail(ResponseConstants.NotFound);
         }
 
         protected override ServiceResult Validate(RecordDTO dto) {

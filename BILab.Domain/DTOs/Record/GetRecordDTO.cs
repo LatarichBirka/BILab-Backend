@@ -9,5 +9,7 @@ namespace BILab.Domain.DTOs.Record {
         public Guid EmployerId { get; set; }
         public Guid AdressId { get; set; }
         public bool IsSpecialOffer { get; set; }
+        public bool IsClosed { get; set; } = false;
+        public bool IsCanceled { get; set; } = false;
     }
 }

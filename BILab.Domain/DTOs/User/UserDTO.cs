@@ -11,6 +11,7 @@ namespace BILab.Domain.DTOs.User {
         public string? PhoneNumber { get; set; }
         public Sex? Sex { get; set; }
         public DateTime? DateOfBirth { get; set; }
+        public string? AvatarPath { get; set; }
         public bool IsNew { get; set; } = false;
     }
 }

@@ -34,10 +34,18 @@ namespace BILab.WebAPI.Controllers {
             return GetResult(result, (int)HttpStatusCode.OK);
         }
 
-        [Authorize]
+        [Authorize] // а вот здесь просто не пропускает авторизацию
         [HttpGet("/{employeeId}")]
-        public IActionResult GetFreeSchedule(Guid employeeId, [FromQuery] DayOfWeek dayOfWeek) {
-            var result = _service.GetFreeShedule(employeeId, dayOfWeek);
+        public IActionResult GetFreeSchedule(Guid employeeId, [FromQuery] DateTime checkData) {
+            var result = _service.GetFreeShedule(employeeId, checkData);
+            return GetResult(result, (int)HttpStatusCode.OK);
+        }
+
+        [AllowAnonymous] //здесь изменил, потому что посмотреть расписание могут все
+        [HttpGet("/{employeeId}/schedules")]
+        public async Task<IActionResult> GetSchedulesByEmployee(Guid employeeId)
+        {
+            var result = await _service.GetScheduleByEmployee(employeeId);
             return GetResult(result, (int)HttpStatusCode.OK);
         }
     }

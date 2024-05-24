@@ -14,12 +14,27 @@ namespace BILab.WebAPI.Controllers {
         public RecordController(IRecordService service) : base(service) {
         }
 
-
-        [Authorize(Roles = $"{Constants.NameRoleUser},{Constants.NameRoleAdmin}")]
+        [Authorize]
         [HttpPost]
         public override async Task<IActionResult> CreateAsync([FromBody] RecordDTO createDto) {
             var result = await _service.CreateAsync(createDto);
             return GetResult(result, (int)HttpStatusCode.Created);
+        }
+
+        [Authorize]
+        [HttpPut]
+        public override async Task<IActionResult> UpdateAsync([FromBody] RecordDTO updateDto)
+        {
+            var result = await _service.UpdateAsync(updateDto);
+            return GetResult(result, (int)HttpStatusCode.NoContent);
+        }
+
+        [Authorize]
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteAsync(Guid id)
+        {
+            var result = await _service.DeleteAsync(id);
+            return GetResult(result, (int)HttpStatusCode.NoContent);
         }
 
         [Authorize]
@@ -44,9 +59,17 @@ namespace BILab.WebAPI.Controllers {
         }
 
         [Authorize]
-        [HttpPut("close")]
+        [HttpPut("closeOrCancel")] 
         public async Task<IActionResult> CloseRecord(CloseRecordDto dto) {
             var result = await _service.CloseRecord(dto);
+            return GetResult(result, (int)HttpStatusCode.OK);
+        }
+
+        [Authorize]
+        [HttpGet("{id}/full-data")]
+        public async Task<IActionResult> GetFullDataByIdAsync(Guid id)
+        {
+            var result = await _service.GetFullRecordDataByIdAsync(id);
             return GetResult(result, (int)HttpStatusCode.OK);
         }
     }
