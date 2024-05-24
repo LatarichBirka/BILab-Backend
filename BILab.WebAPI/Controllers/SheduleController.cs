@@ -7,10 +7,34 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
-namespace BILab.WebAPI.Controllers {
-    [Authorize(Roles = $"{Constants.NameRoleAdmin}, {Constants.NameRoleEmployee}")]
+namespace BILab.WebAPI.Controllers
+{
     public class SheduleController : BaseCrudController<ISheduleService, SheduleDTO, SheduleDTO, Guid> {
         public SheduleController(ISheduleService service) : base(service) {
+        }
+
+        [Authorize(Roles = Constants.NameRoleAdmin)]
+        [HttpPost]
+        public override async Task<IActionResult> CreateAsync([FromBody] SheduleDTO createDto)
+        {
+            var result = await _service.CreateAsync(createDto);
+            return GetResult(result, (int)HttpStatusCode.Created);
+        }
+
+        [Authorize(Roles = Constants.NameRoleAdmin)]
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteAsync(Guid id)
+        {
+            var result = await _service.DeleteAsync(id);
+            return GetResult(result, (int)HttpStatusCode.NoContent);
+        }
+
+        [Authorize(Roles = Constants.NameRoleAdmin)]
+        [HttpPut]
+        public override async Task<IActionResult> UpdateAsync([FromBody] SheduleDTO updateDto)
+        {
+            var result = await _service.UpdateAsync(updateDto);
+            return GetResult(result, (int)HttpStatusCode.NoContent);
         }
 
         [AllowAnonymous]
@@ -34,14 +58,13 @@ namespace BILab.WebAPI.Controllers {
             return GetResult(result, (int)HttpStatusCode.OK);
         }
 
-        [Authorize] // а вот здесь просто не пропускает авторизацию
         [HttpGet("/{employeeId}")]
         public IActionResult GetFreeSchedule(Guid employeeId, [FromQuery] DateTime checkData) {
             var result = _service.GetFreeShedule(employeeId, checkData);
             return GetResult(result, (int)HttpStatusCode.OK);
         }
 
-        [AllowAnonymous] //здесь изменил, потому что посмотреть расписание могут все
+        [AllowAnonymous]
         [HttpGet("/{employeeId}/schedules")]
         public async Task<IActionResult> GetSchedulesByEmployee(Guid employeeId)
         {

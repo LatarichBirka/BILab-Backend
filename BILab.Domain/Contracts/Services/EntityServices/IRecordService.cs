@@ -10,5 +10,6 @@ namespace BILab.Domain.Contracts.Services.EntityServices {
         public Task<ServiceResult> GetRecordsByEmployeeId(Guid employeeId);
         public Task<ServiceResult> GetRecordsByUserId(Guid userId);
         public Task<ServiceResult> GetFullRecordDataByIdAsync(Guid id);
+        public Task<ServiceResult> GetRecordsByTimePeriodAsync(DateTime fromTime, DateTime toTime);
     }
 }

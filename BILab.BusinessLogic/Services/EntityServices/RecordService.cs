@@ -10,6 +10,7 @@ using BILab.Domain.DTOs.Record;
 using BILab.Domain.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Math.EC.Rfc7748;
 using System.Linq.Expressions;
 
 namespace BILab.BusinessLogic.Services.EntityServices {
@@ -93,6 +94,20 @@ namespace BILab.BusinessLogic.Services.EntityServices {
             return record is not null ?
                 ServiceResult.Ok(_mapper.Map<GetFullRecordDTO>(record)) :
                 ServiceResult.Fail(ResponseConstants.NotFound);
+        }
+
+        public async Task<ServiceResult> GetRecordsByTimePeriodAsync(DateTime fromTime, DateTime toTime)
+        {
+            var records = await _context.Records
+                .Include(x => x.Customer)
+                .Include(x => x.Employer)
+                .Include(x => x.Procedure)
+                .Include(x => x.Adress)
+                .Where(x => x.AdmissionDate >= fromTime && x.AdmissionDate <= toTime)
+                .ProjectTo<GetFullRecordDTO>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return ServiceResult.Ok(records);
         }
 
         protected override ServiceResult Validate(RecordDTO dto) {

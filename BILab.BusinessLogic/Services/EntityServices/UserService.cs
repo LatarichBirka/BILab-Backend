@@ -185,7 +185,9 @@ namespace BILab.BusinessLogic.Services.EntityServices {
             }
 
             var updateDto = _mapper.Map<UpdateUserDTO>(userDTO);
+            var userName = user.UserName;
             user = _mapper.Map(updateDto, user);
+            user.UserName = userName;
             var result = await _userManager.UpdateAsync(user);
 
             if (result.Succeeded) {
