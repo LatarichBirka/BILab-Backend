@@ -49,12 +49,12 @@ namespace BILab.BusinessLogic.Services.EntityServices {
             }
 
             _context.Records.Update(record);
+            await _context.SaveChangesAsync();
 
             var customer = record.Customer;
             var emailText = string.Format(ResponseConstants.RecordWasClosedEmail, $"{customer.LastName} {customer.FirstName}", record.Procedure.Name, record.AdmissionDate.ToString("g"));
 
             await _emailService.SendEmailAsync(customer.Email, ResponseConstants.SubjectCloseRecord, emailText);
-
             return ServiceResult.Ok(ResponseConstants.RecordWasClosed);
         }
 

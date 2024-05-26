@@ -188,6 +188,12 @@ namespace BILab.BusinessLogic.Services.EntityServices {
             var userName = user.UserName;
             user = _mapper.Map(updateDto, user);
             user.UserName = userName;
+
+            if (userDTO.Sex.HasValue)
+            {
+                user.Sex = userDTO.Sex.Value;
+            }
+
             var result = await _userManager.UpdateAsync(user);
 
             if (result.Succeeded) {
